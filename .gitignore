@@ -3,6 +3,8 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+*.vs
+
 # User-specific files
 *.rsuser
 *.suo
@@ -23,6 +25,7 @@ mono_crash.*
 [Rr]elease/
 [Rr]eleases/
 
+ARM64/
 [Dd]ebug/x64/
 [Dd]ebugPublic/x64/
 [Rr]elease/x64/
