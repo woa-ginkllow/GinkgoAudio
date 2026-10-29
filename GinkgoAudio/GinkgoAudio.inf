@@ -1,0 +1,55 @@
+; adspdrv.inf - driver KMDF que arranca el ADSP del SM6125 (Redmi Note 8)
+;
+; Hardware ID: ACPI\NICO1005  (el dispositivo ADSP de adsp_acpi.asl)
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System
+ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider    = %ProviderName%
+DriverVer   = 10/22/2026,1.0.0.0
+CatalogFile = adspdrv.cat
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+GinkgoAudio.sys = 1
+
+[Manufacturer]
+%ProviderName% = ADSP_Models,NTarm64
+
+[ADSP_Models.NTarm64]
+%ADSP.DeviceDesc% = ADSP_Install, ACPI\NICO1005
+
+[ADSP_Install.NT]
+CopyFiles = ADSP_CopyFiles
+
+[ADSP_CopyFiles]
+GinkgoAudio.sys
+
+[ADSP_Install.NT.Services]
+AddService = adspdrv, 0x00000002, ADSP_Service
+
+[ADSP_Service]
+DisplayName    = %ADSP.ServiceDesc%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START (lo arranca PnP)
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\GinkgoAudio.sys
+
+[ADSP_Install.NT.Wdf]
+KmdfService = adspdrv, ADSP_Wdf
+
+[ADSP_Wdf]
+KmdfLibraryVersion = 1.15
+
+[Strings]
+ProviderName    = "woa-ginkllow authors"
+DiskName        = "ADSP driver disk"
+ADSP.DeviceDesc = "Qualcomm ADSP (SM6125)"
+ADSP.ServiceDesc = "ADSP loader"

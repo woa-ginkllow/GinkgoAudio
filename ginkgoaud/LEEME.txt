@@ -1,0 +1,58 @@
+ginkgoaud - miniport de audio de Windows (WaveRT) para el altavoz del Redmi Note 8
+=================================================================================
+
+Que hace
+  Windows ve un dispositivo de audio "Altavoz del Redmi Note 8" (48 kHz, 16 bits,
+  estereo). Un hilo del driver copia el buffer ciclico de Windows al motor de PCM
+  de adspdrv.sys con IOCTL_ADSPAUDIO_WRITE (desde el kernel: no hace falta ningun
+  programa de usuario ni permisos de administrador).
+
+Archivos
+  ginkgoaud.h / adapter.cpp / adspclient.cpp / wave.cpp / topo.cpp / adsp_audio.h
+  ginkgoaud.inf            INF (hardware ID ACPI\GNKAUD01)
+  ginkgoaud_acpi.asl       dispositivo AUD1 para pegar en la DSDT/SSDT
+  adsp_driver.c            el de siempre con ADSP_SELFTEST 0 (la autoprueba
+                           chocaria con el stream de Windows)
+
+Proyecto de Visual Studio (nuevo, aparte de GinkgoAudio)
+  - Plantilla: "Empty WDM Driver" (NO KMDF; este driver es WDM puro + PortCls).
+  - Plataforma Release ARM64, Target OS Windows 10, nombre de salida ginkgoaud.sys
+  - Fuentes: adapter.cpp adspclient.cpp wave.cpp topo.cpp (+ cabeceras)
+  - Linker > Input > Additional Dependencies:
+        $(DDK_LIB_PATH)\portcls.lib;$(DDK_LIB_PATH)\stdunk.lib;$(DDK_LIB_PATH)\libcntpr.lib
+  - Si algun aviso de "preferred" molesta: Treat Warnings As Errors = No.
+
+Instalacion
+  1. En la DSDT/SSDT agrega Device (AUD1) (ginkgoaud_acpi.asl) y recompila.
+  2. Reemplaza adsp_driver.c, recompila adspdrv.sys (ADSP_SELFTEST ya en 0).
+  3. DISM /Add-Driver con ginkgoaud.inf /ForceUnsigned, como los demas.
+  4. Reinicio completo del telefono.
+
+Que deberia pasar
+  - Aparece "Altavoz del Redmi Note 8" en Sonido.
+  - El ADSP tarda unos segundos en arrancar; el primer sonido puede tardar mientras
+    el stream abre (OPEN espera hasta 20 s dentro del hilo, sin bloquear a Windows).
+  - Logs: \Windows\ginkgoaud_log.txt (este driver) y \Windows\adsp_log.txt.
+    Borralos antes de cada prueba (los viejos persisten).
+
+Limites de esta primera version
+  - Un solo stream a la vez, solo 48000 Hz / 16 bits / estereo.
+  - El MAX98937 sigue encendiendose por el temporizador de 20 s de ampi2c.
+  - Ganancia fija de proteccion GKA_GAIN_Q15 = -6 dB (ginkgoaud.h).
+  - Retraso fijo de ~100 ms (colchon GKA_PREROLL_BYTES).
+  - Sin el codigo compilado en mi entorno: puede haber errores de compilacion
+    menores contra tu WDK; pegame la salida y los corrijo.
+
+Ganancia / volumen (v9)
+  La ganancia se lee del registro al crear cada stream:
+    HKLM\SYSTEM\CurrentControlSet\Services\ginkgoaud\Parameters
+    GainQ15 (REG_DWORD)      32768 = 0 dB, 16384 = -6 dB (por defecto)
+  El valor se limita siempre a GKA_GAIN_MAX_Q15 = 29000 (~ -1 dB).
+    16384  -6 dB     20000  -4.3 dB    23000  -3.1 dB
+    26000  -2.0 dB   29000  -1.0 dB (maximo)
+  Para cambiarlo con el telefono en modo mass storage (cmd en el PC):
+    reg load HKLM\OFFSYS X:\Windows\System32\config\SYSTEM
+    reg add HKLM\OFFSYS\ControlSet001\Services\ginkgoaud\Parameters /v GainQ15 /t REG_DWORD /d 20000 /f
+    reg unload HKLM\OFFSYS
+  (X: = letra de la particion de Windows del telefono)
+  El log (ginkgoaud_log.txt) muestra "ganancia N/32768" al abrir cada stream.

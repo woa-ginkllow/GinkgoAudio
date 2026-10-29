@@ -1,0 +1,55 @@
+;
+; ampi2c.inf - prueba I2C del MAX98927 (Redmi Note 8, ginkgo)
+;
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System
+ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider    = %ProviderName%
+DriverVer   = 10/25/2026,1.0.0.0
+CatalogFile = GinkgoSpeaker.cat
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskName%
+
+[SourceDisksFiles]
+GinkgoSpeaker.sys = 1
+
+[Manufacturer]
+%MfgName% = Standard,NTarm64
+
+[Standard.NTarm64]
+%AmpI2c.DeviceDesc% = AmpI2c_Device, ACPI\MAX98927
+
+[AmpI2c_Device.NT]
+CopyFiles = Drivers_Dir
+
+[Drivers_Dir]
+GinkgoSpeaker.sys
+
+[AmpI2c_Device.NT.Services]
+AddService = ampi2c,0x00000002,AmpI2c_Service_Inst
+
+[AmpI2c_Service_Inst]
+DisplayName    = %AmpI2c.SvcDesc%
+ServiceType    = 1
+StartType      = 3
+ErrorControl   = 1
+ServiceBinary  = %12%\GinkgoSpeaker.sys
+
+[AmpI2c_Device.NT.Wdf]
+KmdfService = ampi2c, AmpI2c_wdfsect
+
+[AmpI2c_wdfsect]
+KmdfLibraryVersion = 1.15
+
+[Strings]
+ProviderName        = "woa-ginkllow Authors"
+MfgName             = "woa-ginkllow Authors"
+DiskName            = "MAX98927 disk"
+AmpI2c.DeviceDesc   = "MAX98927 I2C ginkgo (SE1)"
+AmpI2c.SvcDesc      = "MAX98927 I2C ginkgo"

@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.37507.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GinkgoSpeaker", "GinkgoSpeaker.vcxproj", "{5AE9B813-BBA7-42A9-A865-D4470794F4CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Debug|ARM.ActiveCfg = Debug|ARM
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Debug|ARM.Build.0 = Debug|ARM
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Debug|ARM.Deploy.0 = Debug|ARM
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Debug|ARM64.Build.0 = Debug|ARM64
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Debug|x64.ActiveCfg = Debug|x64
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Debug|x64.Build.0 = Debug|x64
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Debug|x64.Deploy.0 = Debug|x64
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Debug|x86.ActiveCfg = Debug|Win32
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Debug|x86.Build.0 = Debug|Win32
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Debug|x86.Deploy.0 = Debug|Win32
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Release|ARM.ActiveCfg = Release|ARM
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Release|ARM.Build.0 = Release|ARM
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Release|ARM.Deploy.0 = Release|ARM
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Release|ARM64.ActiveCfg = Release|ARM64
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Release|ARM64.Build.0 = Release|ARM64
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Release|ARM64.Deploy.0 = Release|ARM64
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Release|x64.ActiveCfg = Release|x64
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Release|x64.Build.0 = Release|x64
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Release|x64.Deploy.0 = Release|x64
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Release|x86.ActiveCfg = Release|Win32
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Release|x86.Build.0 = Release|Win32
+		{5AE9B813-BBA7-42A9-A865-D4470794F4CB}.Release|x86.Deploy.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {49A20244-4AA0-4E19-9B05-7F3029B1436C}
+	EndGlobalSection
+EndGlobal
