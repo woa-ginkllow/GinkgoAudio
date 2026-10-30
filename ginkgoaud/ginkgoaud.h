@@ -19,7 +19,7 @@
 #endif
 
 /* Marca de version: subirla en cada entrega para ver en el log que binario corre. */
-#define GKA_BUILD_ID           "v9-2026-10-28"
+#define GKA_BUILD_ID           "v10-2026-10-30"
 
 #define GKA_TAG                'aKNG'
 

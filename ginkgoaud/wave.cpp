@@ -95,7 +95,11 @@ public:
     LONG m_StreamActive = 0;      /* una sola instancia de stream */
 };
 
-#define GKA_TMP_BYTES 16384u      /* trozo maximo por IOCTL (multiplo de GKA_BLOCK) */
+#define GKA_TMP_BYTES 32768u      /* trozo maximo por IOCTL (multiplo de GKA_BLOCK) */
+/* El preroll de silencio se arma en m_Tmp: tiene que caber (antes 19200 > 16384
+ * desbordaba el pool y provocaba KERNEL_MODE_HEAP_CORRUPTION). */
+C_ASSERT(GKA_PREROLL_BYTES <= GKA_TMP_BYTES);
+C_ASSERT((GKA_TMP_BYTES % GKA_BLOCK) == 0);
 
 class CMiniportWaveStream : public IMiniportWaveRTStream, public CUnknown
 {
@@ -618,10 +622,12 @@ VOID CMiniportWaveStream::Session(VOID)
         if (KeWaitForSingleObject(&m_QuitEvt, Executive, KernelMode, FALSE, &tick) == STATUS_SUCCESS) {
             break;
         }
-        if (m_State != KSSTATE_RUN || !m_Buf) {
+        PUCHAR buf = m_Buf;             /* copia local: FreeAudioBuffer lo pone a NULL */
+        ULONG  bufSize = m_BufSize;
+        if (m_State != KSSTATE_RUN || !buf) {
             break;                      /* PAUSE/STOP o buffer liberado */
         }
-        if (!ok || m_BufSize == 0) {
+        if (!ok || bufSize == 0) {
             continue;
         }
 
@@ -643,9 +649,9 @@ VOID CMiniportWaveStream::Session(VOID)
         if (avail < GKA_BLOCK) {
             continue;
         }
-        if (avail > m_BufSize) {                 /* nos quedamos atras mas que el buffer */
-            m_Copied = pos - m_BufSize;
-            avail = m_BufSize;
+        if (avail > bufSize) {                   /* nos quedamos atras mas que el buffer */
+            m_Copied = pos - bufSize;
+            avail = bufSize;
             drops++;
         }
 
@@ -658,16 +664,16 @@ VOID CMiniportWaveStream::Session(VOID)
         }
 
         while (avail >= GKA_BLOCK) {
-            ULONG off = (ULONG)(m_Copied % m_BufSize);
+            ULONG off = (ULONG)(m_Copied % bufSize);
             ULONG n = (avail < GKA_TMP_BYTES) ? (ULONG)avail : GKA_TMP_BYTES;
             ULONG acc = 0;
 
-            if (n > m_BufSize - off) n = m_BufSize - off;
+            if (n > bufSize - off) n = bufSize - off;
             n -= n % GKA_BLOCK;
             if (n == 0) {
                 break;
             }
-            ApplyGain((const INT16 *)(m_Buf + off), (INT16 *)m_Tmp, n / sizeof(INT16), m_Gain);
+            ApplyGain((const INT16 *)(buf + off), (INT16 *)m_Tmp, n / sizeof(INT16), m_Gain);
             (VOID)AdspClientWrite(m_Tmp, n, &acc);
             m_Copied += n;
             avail -= n;
